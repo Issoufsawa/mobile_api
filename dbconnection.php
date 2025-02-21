@@ -6,7 +6,4 @@ function dbconnection(){
 }
 
 
-
-
-
 ?>

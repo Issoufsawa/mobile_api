@@ -3,6 +3,7 @@
 include 'dbconnection.php'; // Assurez-vous que ce fichier contient votre logique de connexion à la base de données
 $con = dbconnection();
 
+
 // Vérifiez si la méthode HTTP est POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Récupérer les données envoyées par Flutter au format JSON
@@ -39,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
 
-        // Vérifiez si le mot de passe correspond (en utilisant password_verify si le mot de passe est haché)
+        // Comparaison du mot de passe avec password_verify (si le mot de passe est haché)
         if (password_verify($password, $user['password'])) {
             // Connexion réussie
             echo json_encode([
@@ -49,11 +50,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     "id" => $user['id'],
                     "email" => $user['email'],
                     "name" => $user['name'],
+                    "password" => $user['password'],
+                    "password1" => $password,     
                 ]
             ]);
+          
+
         } else {
             // Mot de passe incorrect
             echo json_encode(["success" => false, "message" => "Mot de passe incorrect"]);
+            
         }
     } else {
         // Email non trouvé

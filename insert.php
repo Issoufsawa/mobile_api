@@ -23,7 +23,7 @@
    if(isset($_POST['password']))
    {
     $password=$_POST['password'];
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+    $hashed_password = password_hash($password,PASSWORD_BCRYPT);
    }
     else  return;
    $query="INSERT INTO client(name,prename,email,password)VALUES('$name','$prename','$email','$hashed_password')";
