@@ -2,7 +2,7 @@
 function dbconnection() {
     // Paramètres de connexion
     $host = "localhost";
-    $dbname = "mobile";
+    $dbname = "webbd";
     $username = "root";
     $password = "";
 

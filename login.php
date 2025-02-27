@@ -9,29 +9,29 @@ $con = dbconnection(); // Connexion via PDO
     $data = json_decode(file_get_contents("php://input"));
 
     // Vérification que les champs email et mot de passe sont présents
-    $email = isset($data->email) ? $data->email : '';
+    $num_cpte_cli = isset($data->num_cpte_cli) ? $data->num_cpte_cli : '';
     $password = isset($data->password) ? $data->password : '';
 
     // Validation des champs
-    if (empty($email) || empty($password)) {
+    if (empty($num_cpte_cli) || empty($password)) {
         echo json_encode(["success" => false, "message" => "Veuillez fournir un email et un mot de passe."]);
         exit();
     }
 
-    // Validation de l'email
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(["success" => false, "message" => "Format d'email invalide"]);
-        exit();
-    }
+    // // Validation de l'email
+    // if (!filter_var($num_cpte_cli, FILTER_VALIDATE_EMAIL)) {
+    //     echo json_encode(["success" => false, "message" => "Format d'email invalide"]);
+    //     exit();
+    // }
 
     // Requête pour récupérer l'utilisateur par email
-    $query = "SELECT * FROM client WHERE email = :email";
+    $query = "SELECT * FROM courants WHERE num_cpte_cli = :num_cpte_cli";
     try {
         // Préparation de la requête PDO
         $stmt = $con->prepare($query);
         
         // Lier le paramètre :email avec la variable $email
-        $stmt->bindParam(':email', $email);
+        $stmt->bindParam(':num_cpte_cli', $num_cpte_cli);
         
         // Exécution de la requête
         $stmt->execute();
@@ -49,8 +49,8 @@ $con = dbconnection(); // Connexion via PDO
                     "message" => "Connexion réussie",
                     "data" => [
                         "id" => $user['id'],
-                        "email" => $user['email'],
-                        "name" => $user['name'],
+                        "numero compte" => $user['num_cpte_cli'],
+                       
                         
                     ]
                 ]);
@@ -60,7 +60,7 @@ $con = dbconnection(); // Connexion via PDO
             }
         } else {
             // Email non trouvé
-            echo json_encode(["success" => false, "message" => "Email non trouvé"]);
+            echo json_encode(["success" => false, "message" => "numero de compte non trouvé"]);
         }
     } catch (PDOException $e) {
         // Si une erreur survient avec la requête

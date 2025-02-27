@@ -1,42 +1,34 @@
 <?php
-// Connexion à la base de données
-include 'dbconnection.php'; // Assurez-vous que ce fichier contient votre logique de connexion à la base de données
-$con = dbconnection(); // Connexion via PDO
+// Inclure la connexion à la base de données
+include 'dbconnection.php'; // Inclure le fichier de connexion
 
+// Appel de la fonction de connexion à la base de données
+$pdo = dbconnection(); // Connexion PDO à la base de données
 
-try {
-    // Connexion à la base de données
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo 'Erreur de connexion : ' . $e->getMessage();
-    exit();
-}
+// Vérifier si le numéro de compte est passé en tant que paramètre dans l'URL
+if (isset($_GET['num_cpte_cli'])) {
+    $num_cpte_cli = $_GET['num_cpte_cli'];
 
-// Vérifier si l'email est passé en tant que paramètre dans l'URL
-if (isset($_GET['email'])) {
-    $email = $_GET['email'];
-
-    // Préparer la requête pour récupérer le nom de l'utilisateur
-    $query = "SELECT name FROM client WHERE email = :email";
+    // Préparer la requête pour récupérer le champ createdat
+    $query = "SELECT num_cpte_cli, createdat FROM courants WHERE num_cpte_cli = :num_cpte_cli";
     $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':num_cpte_cli', $num_cpte_cli);
     $stmt->execute();
 
-    // Vérifier si l'utilisateur existe
+    // Vérifier si des résultats sont trouvés
     if ($stmt->rowCount() > 0) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        // Renvoie le nom de l'utilisateur en format JSON
-        echo json_encode(['name' => $user['name']]);
+        // Renvoie les informations de l'utilisateur en format JSON
+        echo json_encode(['num_cpte_cli' => $user['num_cpte_cli'], 'createdat' => $user['createdat']]);
     } else {
-        // Si l'utilisateur n'est pas trouvé, renvoyer un message d'erreur
+        // Si le numéro de compte n'est pas trouvé, renvoyer un message d'erreur
         echo json_encode(['error' => 'Utilisateur non trouvé']);
     }
 } else {
-    // Si aucun email n'est fourni, renvoyer un message d'erreur
-    echo json_encode(['error' => 'Email non fourni']);
+    // Si aucun numéro de compte n'est fourni, renvoyer un message d'erreur
+    echo json_encode(['error' => 'Numéro de compte non fourni']);
 }
 
 // Fermer la connexion à la base de données
-$con = null; // Fermeture de la connexion PDO
+$pdo = null; // Fermeture de la connexion PDO
 ?>
